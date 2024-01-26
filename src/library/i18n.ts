@@ -16,11 +16,9 @@ type LocalePath = {
 
 export function generateLocalePaths(url: URL): LocalePath[] {
   const pathnames = url.pathname.replace(/\/$/, '').split('/')
-  console.log('pathnames', pathnames)
 
   return Object.keys(LANGS).map((lang) => {
     pathnames[pathnames.length - 1] = lang
-    console.log('pathnames', pathnames)
     return {
       path: pathnames.join('/'),
       lang: lang as Lang,
