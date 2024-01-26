@@ -1,0 +1,30 @@
+---
+import { generateLocalePaths } from '../library/i18n'
+---
+
+<select data-selector="lang-selector">
+  {
+    generateLocalePaths(Astro.url).map(({ path, lang, label }) => (
+      <option
+        label={label}
+        value={path}
+        selected={lang === Astro.currentLocale}
+      />
+    ))
+  }
+</select>
+
+<script>
+  function changeLang(): void {
+    const select = document.querySelector('[data-selector="lang-selector"]')
+    if (!select) return
+
+    select.addEventListener('change', (event) => {
+      const target = event.target
+      if (target instanceof HTMLSelectElement) {
+        location.href = target.value
+      }
+    })
+  }
+  changeLang()
+</script>
