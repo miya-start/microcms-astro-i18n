@@ -6,7 +6,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../../consts'
 
 //microCMS呼び出し
 import { getBlogs } from '../../../library/microcms'
-import type { Lang } from '../../../@types'
+import type { Lang } from '../../../types'
 const { contents: posts } = await getBlogs({
   fields: ['id', 'title', 'publishedAt'],
 })

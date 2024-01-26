@@ -1,5 +1,16 @@
 ---
 import Layout from 'layouts/BlogPost.astro'
+import { LANGS } from 'types/index'
+
+export async function getStaticPaths() {
+  return Object.keys(LANGS).map((lang) => {
+    return {
+      params: {
+        lang,
+      },
+    }
+  })
+}
 ---
 
 <Layout

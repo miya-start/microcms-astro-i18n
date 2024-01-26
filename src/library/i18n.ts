@@ -1,4 +1,4 @@
-import { type Lang, LANGS } from '../@types'
+import { type Lang, LANGS } from '../types'
 
 export type Multilingual = Record<Lang, string>
 
