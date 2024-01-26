@@ -1,17 +1,21 @@
 ---
+import { useTranslations } from 'library/i18n'
+import type { Lang } from 'types'
+
 interface Props {
-	date: Date;
+  date: Date
 }
 
-const { date } = Astro.props;
+const { date } = Astro.props
+const t = useTranslations(Astro.currentLocale as Lang)
 ---
 
 <time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
+  {
+    date.toLocaleDateString(t({ en: 'en-us', ja: 'ja-jp' }), {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  }
 </time>

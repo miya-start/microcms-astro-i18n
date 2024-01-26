@@ -1,6 +1,7 @@
 ---
 import Layout from 'layouts/BlogPost.astro'
-import { LANGS } from 'types/index'
+import { useTranslations } from 'library/i18n'
+import { LANGS, type Lang } from 'types/index'
 
 export async function getStaticPaths() {
   return Object.keys(LANGS).map((lang) => {
@@ -11,11 +12,17 @@ export async function getStaticPaths() {
     }
   })
 }
+
+const { lang } = Astro.params
+const t = useTranslations(lang as Lang)
 ---
 
 <Layout
-  title="About Me"
-  description="Lorem ipsum dolor sit amet"
+  title={t({ en: 'Blog Post', ja: 'ブログ記事' })}
+  description={t({
+    en: 'This is a blog post.',
+    ja: 'これはブログ記事です。',
+  })}
   pubDate={new Date('August 08 2021')}
   heroImage="/blog-placeholder-about.jpg"
 >
