@@ -1,6 +1,6 @@
 export const langsObj = {
-  ja: '日本語',
-  en: 'English',
+  ja: 'JP',
+  en: 'EN',
 } as const
 
 export const langsArr = Object.keys(langsObj) as (keyof typeof langsObj)[]

@@ -1,24 +1,39 @@
 ---
-import type { Lang } from 'types'
 import { SITE_TITLE } from 'consts'
+import { useTranslations } from 'library/i18n'
+import type { Lang } from 'types'
 import HeaderLink from './HeaderLink.astro'
 import LangSelector from './lang-selector.astro'
 
 const lang = Astro.currentLocale as Lang
+const t = useTranslations(lang)
 ---
 
 <header>
   <nav>
     <h2><a href="/">{SITE_TITLE[lang]}</a></h2>
     <div class="internal-links">
-      <HeaderLink href=`/${Astro.currentLocale}`>Home</HeaderLink>
-      <HeaderLink href=`/blog/${Astro.currentLocale}`>Blog</HeaderLink>
-      <HeaderLink href=`/about/${Astro.currentLocale}`>About</HeaderLink>
+      <HeaderLink href=`/${Astro.currentLocale}`>
+        {t({ en: 'Home', ja: 'ホーム' })}
+      </HeaderLink>
+      <HeaderLink href=`/blog/${Astro.currentLocale}`>
+        {t({ en: 'Article', ja: '記事' })}
+      </HeaderLink>
+      <HeaderLink href=`/about/${Astro.currentLocale}`>
+        {t({ en: 'About', ja: 'アバウト' })}
+      </HeaderLink>
       <LangSelector />
     </div>
     <div class="social-links">
       <a href="https://m.webtoo.ls/@astro" target="_blank">
-        <span class="sr-only">Follow Astro on Mastodon</span>
+        <span class="sr-only"
+          >{
+            t({
+              en: 'Follow Astro on Mastodon',
+              ja: 'マストドンでフォローする',
+            })
+          }</span
+        >
         <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
           ><path
             fill="currentColor"
@@ -27,7 +42,14 @@ const lang = Astro.currentLocale as Lang
         >
       </a>
       <a href="https://twitter.com/astrodotbuild" target="_blank">
-        <span class="sr-only">Follow Astro on Twitter</span>
+        <span class="sr-only"
+          >{
+            t({
+              en: 'Follow Astro on Twitter',
+              ja: 'ツイッターでフォローする',
+            })
+          }</span
+        >
         <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
           ><path
             fill="currentColor"
@@ -36,7 +58,14 @@ const lang = Astro.currentLocale as Lang
         >
       </a>
       <a href="https://github.com/withastro/astro" target="_blank">
-        <span class="sr-only">Go to Astro's GitHub repo</span>
+        <span class="sr-only"
+          >{
+            t({
+              en: "Go to Astro's GitHub repo",
+              ja: 'AstroのGitHubリポジトリへ',
+            })
+          }</span
+        >
         <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
           ><path
             fill="currentColor"
