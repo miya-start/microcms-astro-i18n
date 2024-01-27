@@ -9,7 +9,7 @@ const lang = Astro.currentLocale as Lang
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <BaseHead title={SITE_TITLE[lang]} description={SITE_DESCRIPTION} />
   </head>

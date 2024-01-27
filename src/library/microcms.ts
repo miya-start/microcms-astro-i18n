@@ -14,7 +14,10 @@ export type Blog = {
     ja: string
     en: string
   }
-  content: string
+  content: {
+    ja: string
+    en: string
+  }
   eyecatch: {
     url: string
     height: number

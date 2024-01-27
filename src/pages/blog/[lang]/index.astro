@@ -5,6 +5,7 @@ import Footer from 'components/Footer.astro'
 import { SITE_TITLE, SITE_DESCRIPTION } from 'consts'
 import { getBlogs } from 'library/microcms'
 import { langsArr } from 'types/index'
+import FormattedDate from 'components/FormattedDate.astro'
 
 export async function getStaticPaths() {
   return langsArr.map((lang) => ({
@@ -16,7 +17,7 @@ export async function getStaticPaths() {
 
 const { lang } = Astro.params
 const { contents: posts } = await getBlogs({
-  fields: ['id', 'title', 'publishedAt'],
+  fields: ['id', 'title', 'publishedAt', 'eyecatch'],
 })
 ---
 
@@ -101,12 +102,22 @@ const { contents: posts } = await getBlogs({
         <ul>
           {
             posts.map((post) => (
-              <li>
-                <time datetime={post.publishedAt}>
-                  {new Date(post.publishedAt).toLocaleDateString('ja-JP')}
-                </time>
-                <a href={`/blog/${lang}/${post.id}`}>{post.title[lang]}</a>
-              </li>
+              <>
+                <li>
+                  <a href={`/blog/${lang}/${post.id}`}>
+                    <img
+                      width={720}
+                      height={360}
+                      src={post.eyecatch.url}
+                      alt=""
+                    />
+                    <h4 class="title">{post.title[lang]}</h4>
+                    <p class="date">
+                      <FormattedDate date={new Date(post.publishedAt)} />
+                    </p>
+                  </a>
+                </li>
+              </>
             ))
           }
         </ul>
