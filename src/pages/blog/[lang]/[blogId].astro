@@ -1,24 +1,30 @@
 ---
-import Layout from '../../layouts/BlogPost.astro'
-import { getBlogs, getBlogDetail } from '../../library/microcms'
+import Layout from 'layouts/BlogPost.astro'
+import { getBlogs, getBlogDetail } from 'library/microcms'
+import { langsArr } from 'types'
 
 // 生成する記事のIDを全て取得
 export async function getStaticPaths() {
   const response = await getBlogs({ fields: ['id'] })
-  return response.contents.map((content: any) => ({
-    params: {
-      blogId: content.id,
-    },
-  }))
+  return langsArr.flatMap((lang) => {
+    return response.contents.map((content: any) => ({
+      params: {
+        blogId: content.id,
+        lang,
+      },
+    }))
+  })
 }
 
+console.log(Astro.params)
+
 //記事の詳細情報を取得
-const { blogId } = Astro.params
+const { blogId, lang } = Astro.params
 const blog = await getBlogDetail(blogId as string)
 ---
 
 <Layout
-  title={blog.title}
+  title={blog.title[lang]}
   description=""
   heroImage={blog.eyecatch?.url ?? ''}
   pubDate={new Date(blog.publishedAt)}

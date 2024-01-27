@@ -1,4 +1,4 @@
-import { type Lang, LANGS } from '../types'
+import { type Lang, langsArr, langsObj } from '../types'
 
 export type Multilingual = Record<Lang, string>
 
@@ -11,26 +11,21 @@ export function useTranslations(lang: Lang) {
 type LocalePath = {
   path: string
   lang: Lang
-  label: (typeof LANGS)[Lang]
+  label: (typeof langsObj)[Lang]
 }
 
+const regex = new RegExp(`^(${langsArr.join('|')})$`)
 export function generateLocalePaths(url: URL): LocalePath[] {
   const pathnames = url.pathname.replace(/\/$/, '').split('/')
 
-  return Object.keys(LANGS).map((lang) => {
-    pathnames[pathnames.length - 1] = lang
-    return {
-      path: pathnames.join('/'),
-      lang: lang as Lang,
-      label: LANGS[lang as Lang],
-    }
-  })
-}
-
-export function generateLocaleUrls(url: URL): LocalePath[] {
-  const baseOrigin = url.origin
-  return generateLocalePaths(url).map((localePath) => ({
-    ...localePath,
-    path: baseOrigin + localePath.path,
+  return langsArr.map((lang) => ({
+    path: pathnames
+      .flatMap((pathname) => {
+        if (pathname.match(regex)) return lang
+        return pathname
+      })
+      .join('/'),
+    lang,
+    label: langsObj[lang],
   }))
 }

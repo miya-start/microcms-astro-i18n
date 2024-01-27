@@ -1,12 +1,12 @@
 ---
-import type { Lang } from '../../types'
-import BaseHead from '../../components/BaseHead.astro'
-import Header from '../../components/Header.astro'
-import Footer from '../../components/Footer.astro'
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts'
+import BaseHead from 'components/BaseHead.astro'
+import Header from 'components/Header.astro'
+import Footer from 'components/Footer.astro'
+import { SITE_TITLE, SITE_DESCRIPTION } from 'consts'
 
 //microCMS呼び出し
-import { getBlogs } from '../../library/microcms'
+import { getBlogs } from 'library/microcms'
+import type { Lang } from 'types'
 const { contents: posts } = await getBlogs({
   fields: ['id', 'title', 'publishedAt'],
 })
@@ -99,7 +99,7 @@ const lang = Astro.currentLocale as Lang
                 <time datetime={post.publishedAt}>
                   {new Date(post.publishedAt).toLocaleDateString('ja-JP')}
                 </time>
-                <a href={`/blog/${post.id}`}>{post.title}</a>
+                <a href={`/blog/${post.id}`}>{post.title[lang]}</a>
               </li>
             ))
           }

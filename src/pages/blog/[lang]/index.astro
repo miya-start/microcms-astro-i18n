@@ -1,21 +1,27 @@
 ---
-import BaseHead from '../../../components/BaseHead.astro'
-import Header from '../../../components/Header.astro'
-import Footer from '../../../components/Footer.astro'
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../../consts'
+import BaseHead from 'components/BaseHead.astro'
+import Header from 'components/Header.astro'
+import Footer from 'components/Footer.astro'
+import { SITE_TITLE, SITE_DESCRIPTION } from 'consts'
+import { getBlogs } from 'library/microcms'
+import { langsArr } from 'types/index'
 
-//microCMS呼び出し
-import { getBlogs } from '../../../library/microcms'
-import type { Lang } from '../../../types'
+export async function getStaticPaths() {
+  return langsArr.map((lang) => ({
+    params: {
+      lang,
+    },
+  }))
+}
+
+const { lang } = Astro.params
 const { contents: posts } = await getBlogs({
   fields: ['id', 'title', 'publishedAt'],
 })
-
-const lang = Astro.currentLocale as Lang
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <BaseHead title={SITE_TITLE[lang]} description={SITE_DESCRIPTION} />
     <style>
@@ -99,7 +105,7 @@ const lang = Astro.currentLocale as Lang
                 <time datetime={post.publishedAt}>
                   {new Date(post.publishedAt).toLocaleDateString('ja-JP')}
                 </time>
-                <a href={`/blog/${post.id}`}>{post.title}</a>
+                <a href={`/blog/${lang}/${post.id}`}>{post.title[lang]}</a>
               </li>
             ))
           }

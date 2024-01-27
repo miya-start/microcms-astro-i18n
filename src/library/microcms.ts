@@ -10,7 +10,10 @@ export type Blog = {
   updatedAt: string
   publishedAt: string
   revisedAt: string
-  title: string
+  title: {
+    ja: string
+    en: string
+  }
   content: string
   eyecatch: {
     url: string

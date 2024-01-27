@@ -1,10 +1,10 @@
 ---
 import Layout from 'layouts/BlogPost.astro'
 import { useTranslations } from 'library/i18n'
-import { LANGS, type Lang } from 'types/index'
+import { langsArr } from 'types/index'
 
 export async function getStaticPaths() {
-  return Object.keys(LANGS).map((lang) => {
+  return langsArr.map((lang) => {
     return {
       params: {
         lang,
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params
-const t = useTranslations(lang as Lang)
+const t = useTranslations(lang)
 ---
 
 <Layout
