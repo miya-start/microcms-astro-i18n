@@ -3,75 +3,218 @@ import { generateLocalePaths } from 'library/i18n'
 ---
 
 <div class="custom-select">
-  <select data-selector="lang-selector">
+  <button
+    class="select-button"
+    role="combobox"
+    aria-labelledby="select button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="select-dropdown"
+  >
+    <span class="selected-value"
+      >{
+        generateLocalePaths(Astro.url).find(({ lang }) => {
+          return lang === Astro.currentLocale
+        })?.label
+      }</span
+    >
+    <span class="arrow"></span>
+  </button>
+  <ul class="select-dropdown" role="listbox" id="select-dropdown">
     {
       generateLocalePaths(Astro.url).map(({ path, lang, label }) => (
-        <option
-          label={label}
-          value={path}
-          selected={lang === Astro.currentLocale}
-        />
+        <li role="option">
+          <input
+            type="radio"
+            id={lang}
+            name="social-account"
+            value={path}
+            checked={lang === Astro.currentLocale}
+          />
+          <label for={lang}>{label}</label>
+        </li>
       ))
     }
-  </select>
+  </ul>
 </div>
+
+<script>
+  const customSelect: HTMLLabelElement | null =
+    document.querySelector('.custom-select')
+  const selectBtn: HTMLButtonElement | null =
+    document.querySelector('.select-button')
+  const selectedValue: HTMLSpanElement | null =
+    document.querySelector('.selected-value')
+  const optionsList: NodeListOf<HTMLLIElement> | null =
+    document.querySelectorAll('.select-dropdown li')
+
+  if (!(customSelect && selectBtn && selectedValue && optionsList))
+    throw Error('Missing elements')
+  if (optionsList.length === 0) throw Error('Missing options')
+
+  // add a click event to select button
+  selectBtn.addEventListener('click', () => {
+    // add/remove active class on the container element
+    customSelect.classList.toggle('active')
+    // update the aria-expanded attribute based on the current state
+    selectBtn.setAttribute(
+      'aria-expanded',
+      selectBtn.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+    )
+  })
+
+  function changeLabel(
+    e: KeyboardEvent | MouseEvent,
+    selectedValue: Element,
+    customSelect: HTMLLabelElement
+  ) {
+    const target = e.target as HTMLLabelElement | null
+    if (!target) throw Error('Missing target')
+
+    // Click Events
+    if (
+      e instanceof MouseEvent &&
+      e.type === 'click' &&
+      e.clientX !== 0 &&
+      e.clientY !== 0
+    ) {
+      selectedValue.textContent =
+        target.closest('li')?.querySelector('label')?.textContent ?? ''
+      customSelect.classList.remove('active')
+    } else if (e instanceof KeyboardEvent && e.key === 'Enter') {
+      // Keyboard Events
+      selectedValue.textContent = target.textContent
+      customSelect.classList.remove('active')
+    }
+  }
+
+  function changeLang(e: KeyboardEvent | MouseEvent): void {
+    const target = e.target as HTMLLabelElement | null
+    if (!target) throw Error('Missing target')
+    const inputValue = target.closest('li')?.querySelector('input')?.value
+    if (!inputValue) throw Error('Missing input value')
+    location.href = inputValue
+  }
+
+  optionsList.forEach((option) => {
+    option.addEventListener('keyup', (e) => {
+      changeLabel(e, selectedValue, customSelect)
+      changeLang(e)
+    })
+    option.addEventListener('click', (e) => {
+      changeLabel(e, selectedValue, customSelect)
+      changeLang(e)
+    })
+  })
+</script>
 
 <style>
   .custom-select {
-    display: inline-block;
     position: relative;
+    display: inline-block;
+    margin-top: 3rem;
+    width: 5rem;
+    font-size: 1.15rem;
+    color: #000;
   }
 
-  select {
-    appearance: none;
-    /* safari */
-    -webkit-appearance: none;
-    /* other styles for aesthetics */
+  .select-button {
     width: 100%;
     font-size: 1.15rem;
-    padding: 0.675em 6em 0.675em 1em;
     background-color: #fff;
+    padding: 0.675em 1em;
     border: 1px solid #caced1;
     border-radius: 0.25rem;
-    color: #000;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .selected-value {
+    text-align: left;
+  }
+
+  .arrow {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #000;
+    transition: transform ease-in-out 0.3s;
+  }
+
+  .select-dropdown {
+    position: absolute;
+    list-style: none;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    border: 1px solid #caced1;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    transition: 0.5s ease;
+    transform: scaleY(0);
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .select-dropdown:focus-within {
+    box-shadow: 0 10px 25px rgba(94, 108, 233, 0.6);
+  }
+
+  .select-dropdown li {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .select-dropdown li label {
+    width: 100%;
+    padding: 8px 10px;
     cursor: pointer;
   }
 
-  .custom-select::before,
-  .custom-select::after {
-    --size: 0.3rem;
+  .select-dropdown::-webkit-scrollbar {
+    width: 7px;
+  }
+  .select-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 25px;
+  }
+
+  .select-dropdown::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 25px;
+  }
+
+  .select-dropdown li:hover,
+  .select-dropdown input:checked ~ label {
+    background-color: #f2f2f2;
+  }
+
+  .select-dropdown input:focus ~ label {
+    background-color: #dfdfdf;
+  }
+
+  .select-dropdown input[type='radio'] {
     position: absolute;
-    content: '';
-    right: 1rem;
-    pointer-events: none;
+    left: 0;
+    opacity: 0;
   }
 
-  .custom-select::before {
-    border-left: var(--size) solid transparent;
-    border-right: var(--size) solid transparent;
-    border-bottom: var(--size) solid black;
-    top: 40%;
+  /* interactivity */
+  .custom-select.active .arrow {
+    transform: rotate(180deg);
   }
 
-  .custom-select::after {
-    border-left: var(--size) solid transparent;
-    border-right: var(--size) solid transparent;
-    border-top: var(--size) solid black;
-    top: 55%;
+  .custom-select.active .select-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: scaleY(1);
   }
 </style>
-
-<script>
-  function changeLang(): void {
-    const select = document.querySelector('[data-selector="lang-selector"]')
-    if (!select) return
-
-    select.addEventListener('change', (event) => {
-      const target = event.target
-      if (target instanceof HTMLSelectElement) {
-        location.href = target.value
-      }
-    })
-  }
-  changeLang()
-</script>
