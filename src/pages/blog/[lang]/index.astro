@@ -6,6 +6,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from 'consts'
 import { getBlogs } from 'library/microcms'
 import { langsArr } from 'types/index'
 import FormattedDate from 'components/FormattedDate.astro'
+import { generateLocaleUrls } from 'library/i18n'
 
 export async function getStaticPaths() {
   return langsArr.map((lang) => ({
@@ -25,6 +26,12 @@ const { contents: posts } = await getBlogs({
 <html lang={lang}>
   <head>
     <BaseHead title={SITE_TITLE[lang]} description={SITE_DESCRIPTION} />
+    {/* i18n */}
+    {
+      generateLocaleUrls(Astro.url).map((props) => (
+        <link rel="alternate" hreflang={props.lang} href={props.path} />
+      ))
+    }
     <style>
       main {
         width: 960px;

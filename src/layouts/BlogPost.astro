@@ -4,7 +4,7 @@ import BaseHead from 'components/BaseHead.astro'
 import Header from 'components/Header.astro'
 import Footer from 'components/Footer.astro'
 import FormattedDate from 'components/FormattedDate.astro'
-import { useTranslations } from 'library/i18n'
+import { generateLocaleUrls, useTranslations } from 'library/i18n'
 import type { Lang } from 'types'
 
 type Props = CollectionEntry<'blog'>['data']
@@ -16,6 +16,12 @@ const t = useTranslations(Astro.currentLocale as Lang)
 <html lang={Astro.currentLocale}>
   <head>
     <BaseHead title={title} description={description} />
+    {/* i18n */}
+    {
+      generateLocaleUrls(Astro.url).map((props) => (
+        <link rel="alternate" hreflang={props.lang} href={props.path} />
+      ))
+    }
     <style>
       main {
         width: calc(100% - 2em);

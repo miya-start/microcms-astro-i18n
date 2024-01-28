@@ -29,3 +29,10 @@ export function generateLocalePaths(url: URL): LocalePath[] {
     label: langsObj[lang],
   }))
 }
+
+export function generateLocaleUrls(url: URL): LocalePath[] {
+  return generateLocalePaths(url).map((localePath) => ({
+    ...localePath,
+    path: url.origin + localePath.path,
+  }))
+}

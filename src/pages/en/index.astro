@@ -4,6 +4,7 @@ import BaseHead from 'components/BaseHead.astro'
 import Header from 'components/Header.astro'
 import Footer from 'components/Footer.astro'
 import { SITE_TITLE, SITE_DESCRIPTION } from 'consts'
+import { generateLocaleUrls } from 'library/i18n'
 
 const lang = Astro.currentLocale as Lang
 ---
@@ -12,6 +13,12 @@ const lang = Astro.currentLocale as Lang
 <html lang="en">
   <head>
     <BaseHead title={SITE_TITLE[lang]} description={SITE_DESCRIPTION} />
+    {/* i18n */}
+    {
+      generateLocaleUrls(Astro.url).map((props) => (
+        <link rel="alternate" hreflang={props.lang} href={props.path} />
+      ))
+    }
   </head>
   <body>
     <Header title={SITE_TITLE[lang]} />
