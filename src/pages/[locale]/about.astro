@@ -7,14 +7,14 @@ export async function getStaticPaths() {
   return langsArr.map((lang) => {
     return {
       params: {
-        lang,
+        locale: lang,
       },
     }
   })
 }
 
-const { lang } = Astro.params
-const t = useTranslations(lang)
+const { locale } = Astro.params
+const t = useTranslations(locale)
 ---
 
 <Layout

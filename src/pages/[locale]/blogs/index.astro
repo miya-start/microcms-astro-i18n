@@ -1,22 +1,23 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n'
 import BaseHead from 'components/BaseHead.astro'
 import Header from 'components/Header.astro'
 import Footer from 'components/Footer.astro'
+import FormattedDate from 'components/FormattedDate.astro'
 import { SITE_TITLE, SITE_DESCRIPTION } from 'consts'
+import { generateLocaleUrls } from 'library/i18n'
 import { getBlogs } from 'library/microcms'
 import { langsArr } from 'types/index'
-import FormattedDate from 'components/FormattedDate.astro'
-import { generateLocaleUrls } from 'library/i18n'
 
 export async function getStaticPaths() {
   return langsArr.map((lang) => ({
     params: {
-      lang,
+      locale: lang,
     },
   }))
 }
 
-const { lang } = Astro.params
+const { locale: lang } = Astro.params
 const { contents: posts } = await getBlogs({
   fields: ['id', 'title', 'publishedAt', 'eyecatch'],
 })
@@ -111,7 +112,7 @@ const { contents: posts } = await getBlogs({
             posts.map((post) => (
               <>
                 <li>
-                  <a href={`/blog/${lang}/${post.id}`}>
+                  <a href={getRelativeLocaleUrl(lang, `/blogs/${post.id}`)}>
                     <img
                       width={720}
                       height={360}
