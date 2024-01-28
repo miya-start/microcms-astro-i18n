@@ -11,7 +11,7 @@ export function useTranslations(lang: Lang) {
 type LocalePath = {
   path: string
   lang: Lang
-  label: (typeof langsObj)[Lang]
+  labelObj: (typeof langsObj)[Lang]
 }
 
 const regex = new RegExp(`^(${langsArr.join('|')})$`)
@@ -26,7 +26,7 @@ export function generateLocalePaths(url: URL): LocalePath[] {
       })
       .join('/'),
     lang,
-    label: langsObj[lang],
+    labelObj: langsObj[lang],
   }))
 }
 

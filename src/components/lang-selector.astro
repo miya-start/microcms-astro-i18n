@@ -15,14 +15,14 @@ import { generateLocalePaths } from 'library/i18n'
       >{
         generateLocalePaths(Astro.url).find(({ lang }) => {
           return lang === Astro.currentLocale
-        })?.label
+        })?.labelObj.labelSimple
       }</span
     >
     <span class="arrow"></span>
   </button>
   <ul class="select-dropdown" role="listbox" id="select-dropdown">
     {
-      generateLocalePaths(Astro.url).map(({ path, lang, label }) => (
+      generateLocalePaths(Astro.url).map(({ path, lang, labelObj }) => (
         <li role="option">
           <input
             type="radio"
@@ -31,7 +31,9 @@ import { generateLocalePaths } from 'library/i18n'
             value={path}
             checked={lang === Astro.currentLocale}
           />
-          <label for={lang}>{label}</label>
+          <label
+            for={lang}
+          >{`${labelObj.labelSimple} - ${labelObj.labelDetail}`}</label>
         </li>
       ))
     }
@@ -63,29 +65,8 @@ import { generateLocalePaths } from 'library/i18n'
     )
   })
 
-  function changeLabel(
-    e: KeyboardEvent | MouseEvent,
-    selectedValue: Element,
-    customSelect: HTMLLabelElement
-  ) {
-    const target = e.target as HTMLLabelElement | null
-    if (!target) throw Error('Missing target')
-
-    // Click Events
-    if (
-      e instanceof MouseEvent &&
-      e.type === 'click' &&
-      e.clientX !== 0 &&
-      e.clientY !== 0
-    ) {
-      selectedValue.textContent =
-        target.closest('li')?.querySelector('label')?.textContent ?? ''
-      customSelect.classList.remove('active')
-    } else if (e instanceof KeyboardEvent && e.key === 'Enter') {
-      // Keyboard Events
-      selectedValue.textContent = target.textContent
-      customSelect.classList.remove('active')
-    }
+  function changeLabel(customSelect: HTMLLabelElement) {
+    customSelect.classList.remove('active')
   }
 
   function changeLang(e: KeyboardEvent | MouseEvent): void {
@@ -98,11 +79,11 @@ import { generateLocalePaths } from 'library/i18n'
 
   optionsList.forEach((option) => {
     option.addEventListener('keyup', (e) => {
-      changeLabel(e, selectedValue, customSelect)
+      changeLabel(customSelect)
       changeLang(e)
     })
     option.addEventListener('click', (e) => {
-      changeLabel(e, selectedValue, customSelect)
+      changeLabel(customSelect)
       changeLang(e)
     })
   })
@@ -112,7 +93,6 @@ import { generateLocalePaths } from 'library/i18n'
   .custom-select {
     position: relative;
     display: inline-block;
-    margin-top: 3rem;
     width: 5rem;
     font-size: 1.15rem;
     color: #000;
@@ -145,8 +125,9 @@ import { generateLocalePaths } from 'library/i18n'
 
   .select-dropdown {
     position: absolute;
+    right: 0;
     list-style: none;
-    width: 100%;
+    width: 7.5rem;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     background-color: #fff;
     border: 1px solid #caced1;
