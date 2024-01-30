@@ -1,4 +1,4 @@
-import { type Lang, langsArr, langsObj } from 'types'
+import { type Lang, defaultLang, langsArr, langsObj } from 'types'
 
 export type Multilingual = Record<Lang, string>
 
@@ -14,17 +14,26 @@ type LocalePath = {
   labelObj: (typeof langsObj)[Lang]
 }
 
-const regex = new RegExp(`^(${langsArr.join('|')})$`)
 export function generateLocalePaths(url: URL): LocalePath[] {
-  const pathnames = url.pathname.replace(/\/$/, '').split('/')
+  const normalizedPath = url.pathname.endsWith('/')
+    ? url.pathname.slice(0, -1)
+    : url.pathname
+  const pathSegments = normalizedPath.split('/').filter(Boolean)
+  const isLocalePresent = langsArr.includes(pathSegments[0] as Lang)
 
   return langsArr.map((lang) => ({
-    path: pathnames
-      .flatMap((pathname) => {
-        if (pathname.match(regex)) return lang
-        return pathname
-      })
-      .join('/'),
+    // Determine the path based on whether the locale is already present in the URL
+    path: isLocalePresent
+      ? // If the default language is being used, do not include the language in the path
+        lang === defaultLang
+        ? `/${pathSegments.slice(1).join('/')}`
+        : // Otherwise, include the language in the path
+          `/${lang}/${pathSegments.slice(1).join('/')}`
+      : // If the locale is not present and the default language is being used, use the normalized path
+      lang === defaultLang
+      ? normalizedPath
+      : // If the locale is not present and it's not the default language, prefix the path with the language
+        `/${lang}${normalizedPath}`,
     lang,
     labelObj: langsObj[lang],
   }))
@@ -33,6 +42,6 @@ export function generateLocalePaths(url: URL): LocalePath[] {
 export function generateLocaleUrls(url: URL): LocalePath[] {
   return generateLocalePaths(url).map((localePath) => ({
     ...localePath,
-    path: url.origin + localePath.path,
+    path: `${url.origin}${localePath.path}`,
   }))
 }

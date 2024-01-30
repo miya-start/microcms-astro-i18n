@@ -1,7 +1,7 @@
 ---
-import Layout from 'layouts/BlogPost.astro'
 import { getBlogs, getBlogDetail } from 'library/microcms'
-import { langsArr } from 'types'
+import Article from 'components/Article.astro'
+import { langsArr, type Lang } from 'types'
 
 // 生成する記事のIDを全て取得
 export async function getStaticPaths() {
@@ -17,16 +17,11 @@ export async function getStaticPaths() {
 }
 
 //記事の詳細情報を取得
-const { blogId, locale: lang } = Astro.params
+const { blogId, locale: lang } = Astro.params as {
+  blogId: string
+  locale: Lang
+}
 const blog = await getBlogDetail(blogId as string)
 ---
 
-<Layout
-  title={blog.title[lang]}
-  description=""
-  heroImage={blog.eyecatch?.url ?? ''}
-  pubDate={new Date(blog.publishedAt)}
-  updatedDate={new Date(blog.updatedAt)}
->
-  <main set:html={blog.content[lang]} />
-</Layout>
+<Article blog={blog} lang={lang} />

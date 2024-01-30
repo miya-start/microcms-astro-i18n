@@ -1,5 +1,7 @@
+export const defaultLang = 'ja'
+
 export const langsObj = {
-  ja: {
+  [defaultLang]: {
     labelSimple: 'JP',
     labelDetail: '日本語',
   },

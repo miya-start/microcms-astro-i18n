@@ -1,0 +1,21 @@
+---
+import Article from 'components/Article.astro'
+import { getBlogs, getBlogDetail } from 'library/microcms'
+import { defaultLang } from 'types'
+
+// 生成する記事のIDを全て取得
+export async function getStaticPaths() {
+  const response = await getBlogs({ fields: ['id'] })
+  return response.contents.map((content: any) => ({
+    params: {
+      blogId: content.id,
+    },
+  }))
+}
+
+const lang = defaultLang
+const { blogId } = Astro.params
+const blog = await getBlogDetail(blogId as string)
+---
+
+<Article blog={blog} lang={lang} />

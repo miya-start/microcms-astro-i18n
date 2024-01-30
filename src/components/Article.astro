@@ -1,0 +1,22 @@
+---
+import Layout from 'layouts/BlogPost.astro'
+import type { Blog } from 'library/microcms'
+import type { Lang } from 'types'
+
+interface Props {
+  blog: Blog
+  lang: Lang
+}
+
+const { blog, lang } = Astro.props
+---
+
+<Layout
+  title={blog.title[lang]}
+  description=""
+  heroImage={blog.eyecatch?.url ?? ''}
+  pubDate={new Date(blog.publishedAt)}
+  updatedDate={new Date(blog.updatedAt)}
+>
+  <main set:html={blog.content[lang]} />
+</Layout>

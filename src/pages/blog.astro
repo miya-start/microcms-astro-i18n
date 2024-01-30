@@ -1,0 +1,12 @@
+---
+import Articles from 'components/Articles.astro'
+import { getBlogs } from 'library/microcms'
+import { defaultLang } from 'types'
+
+const lang = defaultLang
+const { contents: posts } = await getBlogs({
+  fields: ['id', 'title', 'publishedAt', 'eyecatch'],
+})
+---
+
+<Articles posts={posts} lang={lang} />
